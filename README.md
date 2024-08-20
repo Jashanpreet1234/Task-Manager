@@ -41,7 +41,7 @@ To run this application locally, follow these steps:
 2. **Navigate to the project directory:**
 
    ```bash
-cd yourrepositoryname
+   cd yourrepositoryname
 
 3. **Install the required dependencies and Run the application **
 
