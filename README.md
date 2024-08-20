@@ -40,21 +40,14 @@ To run this application locally, follow these steps:
    
 2. **Navigate to the project directory:**
 
-
-
    ```bash
 cd yourrepositoryname
 
-3. **Install the required dependencies:**
+3. **Install the required dependencies and Run the application **
 
 Ensure you have Python installed. Then, install the dependencies:
 
    ```bash
 pip install kivy
 pip install other-required-packages
-
-4. **Run the application:**
-
-
-   ```bash
 python app.py
