@@ -48,6 +48,6 @@ To run this application locally, follow these steps:
 Ensure you have Python installed. Then, install the dependencies:
 
    ```bash
-pip install kivy
-pip install other-required-packages
-python app.py
+   pip install kivy
+   pip install other-required-packages
+   python app.py
