@@ -51,3 +51,19 @@ Ensure you have Python installed. Then, install the dependencies:
    pip install kivy
    pip install other-required-packages
    python app.py
+
+  ```
+## How to Use
+Adding a Task: Enter the task title and priority in the text inputs and click "Add Task."
+Deleting a Task: Click the "Delete" button next to the task you want to remove.
+Completing a Task: Click the "Complete" button to mark the task as done.
+View Analytics: Click "Show Analytics" to view task-related analytics.
+Voice Input: Click "Add Task via Voice" to add a task using voice commands
+
+## Screenshots
+![image](https://github.com/user-attachments/assets/04ef6876-9914-457e-b173-761baf93e0c1)
+![image](https://github.com/user-attachments/assets/049a1d18-78a9-4b22-9e1f-b0a6d44b4221)
+
+
+
+
