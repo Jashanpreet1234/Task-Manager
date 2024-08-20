@@ -6,42 +6,9 @@ from kivy.uix.label import Label
 from kivy.uix.scrollview import ScrollView
 from kivy.uix.gridlayout import GridLayout
 from kivy.uix.popup import Popup
-from kivy.uix.widget import Widget
-from kivy.core.window import Window
-from kivy.metrics import dp
-import matplotlib.pyplot as plt
 from task_manager import TaskManager
 from analytics import Analytics
 from voice_input import VoiceInput
-
-# Set the background color of the app window
-Window.clearcolor = (0.95, 0.95, 0.95, 1)  # Light grey background
-
-class PastelButton(Button):
-    def __init__(self, **kwargs):
-        super().__init__(**kwargs)
-        self.background_color = (0.8, 0.87, 0.91, 1)  # Light pastel blue
-        self.color = (0.2, 0.2, 0.2, 1)  # Dark grey text
-        self.font_size = '16sp'
-        self.size_hint_y = None
-        self.height = dp(50)
-        self.bold = True
-
-class PastelTextInput(TextInput):
-    def __init__(self, **kwargs):
-        super().__init__(**kwargs)
-        self.background_color = (0.94, 0.94, 0.98, 1)  # Very light pastel purple
-        self.foreground_color = (0.3, 0.3, 0.3, 1)  # Dark grey text
-        self.font_size = '16sp'
-        self.padding_y = (10, 10)
-        self.size_hint_y = None
-        self.height = dp(40)
-
-class PastelLabel(Label):
-    def __init__(self, **kwargs):
-        super().__init__(**kwargs)
-        self.color = (0.3, 0.3, 0.3, 1)  # Dark grey text
-        self.font_size = '16sp'
 
 class TaskManagerApp(App):
     def build(self):
@@ -49,33 +16,30 @@ class TaskManagerApp(App):
         self.analytics = Analytics()
         self.voice_input = VoiceInput()
 
-        self.layout = BoxLayout(orientation='vertical', padding=20, spacing=15)
+        self.layout = BoxLayout(orientation='vertical', padding=10)
 
         # Add Task Section
-        input_layout = BoxLayout(orientation='horizontal', spacing=10, size_hint_y=None, height=dp(50))
-        self.task_input = PastelTextInput(hint_text='Enter task title')
-        self.priority_input = PastelTextInput(hint_text='Enter task priority')
-        input_layout.add_widget(self.task_input)
-        input_layout.add_widget(self.priority_input)
-        self.layout.add_widget(input_layout)
-
-        add_button = PastelButton(text="Add Task", on_press=self.add_task)
+        self.task_input = TextInput(hint_text='Enter task title', multiline=False)
+        self.priority_input = TextInput(hint_text='Enter task priority', multiline=False)
+        add_button = Button(text="Add Task", on_press=self.add_task)
+        self.layout.add_widget(self.task_input)
+        self.layout.add_widget(self.priority_input)
         self.layout.add_widget(add_button)
 
         # Tasks List Section
-        self.task_list = GridLayout(cols=1, spacing=15, size_hint_y=None)
+        self.task_list = GridLayout(cols=1, spacing=10, size_hint_y=None)
         self.task_list.bind(minimum_height=self.task_list.setter('height'))
-        self.scroll_view = ScrollView(size_hint=(1, None), size=(400, 200))
+        self.scroll_view = ScrollView(size_hint=(1, None), size=(400, 300))
         self.scroll_view.add_widget(self.task_list)
         self.layout.add_widget(self.scroll_view)
 
         # Message Label
-        self.message_label = PastelLabel()
+        self.message_label = Label()
         self.layout.add_widget(self.message_label)
 
         # Analytics and Voice Input Buttons
-        analytics_button = PastelButton(text="Show Analytics", on_press=self.show_analytics, background_color=(0.65, 0.89, 0.89, 1))
-        voice_input_button = PastelButton(text="Add Task via Voice", on_press=self.add_task_by_voice)
+        analytics_button = Button(text="Show Analytics", on_press=self.show_analytics)
+        voice_input_button = Button(text="Add Task via Voice", on_press=self.add_task_by_voice)
         self.layout.add_widget(analytics_button)
         self.layout.add_widget(voice_input_button)
 
@@ -88,25 +52,20 @@ class TaskManagerApp(App):
             task_text = f"{task_id}: {task['title']} (Priority: {task['priority']})"
             if task['completed']:
                 task_text += " - Completed"
-            task_label = PastelLabel(text=task_text, size_hint_x=0.6, height=dp(40))
-            
-            task_buttons = BoxLayout(orientation='horizontal', size_hint_x=0.4, spacing=5)
-            delete_button = PastelButton(text="Delete", size_hint_y=None, height=dp(40))
+            task_label = Label(text=task_text, size_hint_y=None, height=40)
+            delete_button = Button(text="Delete", size_hint_y=None, height=40)
             delete_button.bind(on_press=lambda x, task_id=task_id: self.delete_task(task_id))
-            complete_button = PastelButton(text="Complete", size_hint_y=None, height=dp(40))
+            complete_button = Button(text="Complete", size_hint_y=None, height=40)
             complete_button.bind(on_press=lambda x, task_id=task_id: self.complete_task(task_id))
-            
-            task_buttons.add_widget(complete_button)
-            task_buttons.add_widget(delete_button)
-            
-            task_box = BoxLayout(orientation='horizontal', size_hint_y=None, height=dp(50), spacing=10)
+            task_box = BoxLayout(orientation='horizontal', size_hint_y=None, height=40)
             task_box.add_widget(task_label)
-            task_box.add_widget(task_buttons)
+            task_box.add_widget(complete_button)
+            task_box.add_widget(delete_button)
             self.task_list.add_widget(task_box)
 
     def add_task(self, instance):
         title = self.task_input.text
-        priority = self.priority_input.text.capitalize()  # Ensure priority is capitalized
+        priority = self.priority_input.text
         if title:
             self.task_manager.add_task(title, priority=priority)
             self.message_label.text = 'Task added successfully!'
@@ -127,12 +86,23 @@ class TaskManagerApp(App):
         self.refresh_task_list()
 
     def show_analytics(self, instance):
-        self.analytics.plot_task_distribution_bar()
+        analytics_data = self.analytics.get_task_distribution()  # Assuming this returns some analytics data
+        popup_content = BoxLayout(orientation='vertical')
+        for key, value in analytics_data.items():
+            popup_content.add_widget(Label(text=f"{key}: {value}"))
+        close_button = Button(text="Close", on_press=lambda x: self.dismiss_popup())
+        popup_content.add_widget(close_button)
+        self.popup = Popup(title="Task Analytics", content=popup_content, size_hint=(0.9, 0.9))
+        self.popup.open()
+
+    def dismiss_popup(self):
+        if hasattr(self, 'popup'):
+            self.popup.dismiss()
 
     def add_task_by_voice(self, instance):
         task = self.voice_input.listen()
         if task:
-            priority = self.priority_input.text.capitalize()  # Ensure priority is capitalized
+            priority = self.priority_input.text
             self.task_manager.add_task(task, priority=priority)
             self.message_label.text = 'Task added via voice input successfully!'
             self.refresh_task_list()
