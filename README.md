@@ -62,6 +62,8 @@ Voice Input: Click "Add Task via Voice" to add a task using voice commands
 
 ## Screenshots
 ![image](https://github.com/user-attachments/assets/04ef6876-9914-457e-b173-761baf93e0c1)
+
+## Deletion of Task 
 ![image](https://github.com/user-attachments/assets/049a1d18-78a9-4b22-9e1f-b0a6d44b4221)
 
 
